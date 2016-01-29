@@ -8,14 +8,37 @@ namespace App\Steam;
 abstract class AbstractWorkshop
 {
     /**
+     * @var Reader
+     */
+    protected $reader;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->reader = new Reader();
+    }
+
+    /**
      * Return the steam app identifier
      *
      * @return int
      */
     abstract public function getAppId();
 
-    public function getAll()
+    /**
+     * Return the steam workshop url
+     *
+     * @return string
+     */
+    public function getUrl()
     {
-        echo __METHOD__;
+        return sprintf('http://steamcommunity.com/app/%d/workshop/', $this->getAppId());
+    }
+
+    public function getTypes()
+    {
+
     }
 }

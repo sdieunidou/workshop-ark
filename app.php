@@ -4,4 +4,5 @@ use App\Ark\ArkWorkshop;
 
 require 'vendor/autoload.php';
 
-(new ArkWorkshop())->getAll();
+$types = (new ArkWorkshop())->getTypes();
+var_dump($types);
