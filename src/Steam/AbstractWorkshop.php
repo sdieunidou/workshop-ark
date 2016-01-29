@@ -85,6 +85,7 @@ abstract class AbstractWorkshop
         $nbPage = $this->countBrowsePages($type);
         for ($page = 1; $page <= $nbPage; $page++) {
             $items = array_merge($items, $this->getBrowseItems($this->getBrowseUrl($type, $page)));
+            var_dump($items);die;
         }
 
         return $items;
@@ -142,8 +143,12 @@ abstract class AbstractWorkshop
                         $rating = preg_replace('/.+\/(.+)-star.png.+/si', '$1', $rating);
                     }
 
+                    $link = $node->filter('a')->attr('href');
+                    $id = preg_replace('/.+id=([0-9]+).+/si', '$1', $link);
+
                     return [
-                        'link' => $node->filter('a')->attr('href'),
+                        'id' => (int) $id,
+                        'link' => $link,
                         'picture' => $node->filter('img.workshopItemPreviewImage ')->attr('src'),
                         'name' => $node->filter('.workshopItemTitle')->text(),
                         'rating' => (int) $rating,
