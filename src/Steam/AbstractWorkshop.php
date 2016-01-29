@@ -2,6 +2,8 @@
 
 namespace App\Steam;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 /**
  * Class AbstractWorkshop.
  */
@@ -37,7 +39,38 @@ abstract class AbstractWorkshop
         return sprintf('http://steamcommunity.com/app/%d/workshop/', $this->getAppId());
     }
 
+    /**
+     * Get availables types
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getTypes()
+    {
+        $crawler = new Crawler($this->reader->get($this->getUrl()), $this->getUrl());
+
+        return $crawler->filter('body > div.apphub_background > div.workshop_home_content > div.right_column > div.panel .filterOption')
+                       ->each(function(Crawler $node) {
+                           $labelNode = $node->filter('label');
+
+                           $label = '';
+                           $count = 0;
+
+                           if ($labelNode->count()) {
+                               $label = mb_substr($node->text(), 0, mb_strpos($node->text(), '(') -2);
+                               $count = mb_substr($node->text(), mb_strpos($node->text(), '(')+1, -1);
+                           }
+
+                           return [
+                               'label' => trim($label),
+                               'id'    => (int) $node->filter('input')->attr('id'),
+                               'count' => (int) $count,
+                           ];
+                       });
+    }
+
+    public function get($typeId)
     {
 
     }

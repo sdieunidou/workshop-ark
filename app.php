@@ -4,5 +4,9 @@ use App\Ark\ArkWorkshop;
 
 require 'vendor/autoload.php';
 
-$types = (new ArkWorkshop())->getTypes();
-var_dump($types);
+$workshop = new ArkWorkshop();
+$types = $workshop->getTypes();
+if (count($types)) {
+    $items = $workshop->get($types[0]['id']);
+    var_dump($items);
+}

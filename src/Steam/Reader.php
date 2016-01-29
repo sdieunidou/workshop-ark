@@ -14,7 +14,7 @@ class Reader
      *
      * @throws \Exception
      */
-    public function getContent($url)
+    public function get($url)
     {
         if (false === $content = file_get_contents($url, false, $this->getStreamContext())) {
             $error = error_get_last();
