@@ -15,6 +15,11 @@ abstract class AbstractWorkshop
     protected $reader;
 
     /**
+     * @var int
+     */
+    protected $browsePerPage = 30;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -53,20 +58,18 @@ abstract class AbstractWorkshop
         return $crawler->filter('body > div.apphub_background > div.workshop_home_content > div.right_column > div.panel .filterOption')
                        ->each(function(Crawler $node) {
                            $labelNode = $node->filter('label');
+                           $inputNode = $node->filter('input');
 
                            $label = '';
-                           $count = 0;
 
                            if ($labelNode->count()) {
                                $label = mb_substr($node->text(), 0, mb_strpos($node->text(), '(') -2);
-                               $count = mb_substr($node->text(), mb_strpos($node->text(), '(')+1, -1);
                            }
 
                            return [
                                'label' => trim($label),
-                               'id'    => (int) $node->filter('input')->attr('id'),
-                               'slug'  => $node->filter('input')->attr('value'),
-                               'count' => (int) $count,
+                               'id'    => (int) $inputNode->attr('id'),
+                               'slug'  => $inputNode->attr('value'),
                            ];
                        });
     }
@@ -74,7 +77,6 @@ abstract class AbstractWorkshop
     public function get($type)
     {
         $browseUrl = $this->getBrowseUrl($type);
-        var_dump($browseUrl);
     }
 
     /**
@@ -86,6 +88,6 @@ abstract class AbstractWorkshop
      */
     protected function getBrowseUrl($type)
     {
-        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=30', $this->getAppId(), $type);
+        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=%d', $this->getAppId(), $type, $this->browsePerPage);
     }
 }
