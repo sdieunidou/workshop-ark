@@ -7,6 +7,6 @@ require 'vendor/autoload.php';
 $workshop = new ArkWorkshop();
 $types = $workshop->getTypes();
 if (count($types)) {
-    $items = $workshop->get($types[0]['id']);
+    $items = $workshop->get($types[0]['value']);
     var_dump($items);
 }

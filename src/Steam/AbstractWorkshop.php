@@ -65,6 +65,7 @@ abstract class AbstractWorkshop
                            return [
                                'label' => trim($label),
                                'id'    => (int) $node->filter('input')->attr('id'),
+                               'slug'  => (int) $node->filter('input')->attr('value'),
                                'count' => (int) $count,
                            ];
                        });
