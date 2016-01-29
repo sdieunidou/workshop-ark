@@ -17,7 +17,7 @@ abstract class AbstractWorkshop
     /**
      * @var int
      */
-    protected $browsePerPage = 30;
+    protected $browsePerPage = 9;
 
     /**
      * Constructor.
@@ -74,20 +74,52 @@ abstract class AbstractWorkshop
                        });
     }
 
+    /**
+     * @param string $type
+     *
+     * @return array
+     */
     public function get($type)
     {
-        $browseUrl = $this->getBrowseUrl($type);
+        $items = [];
+
+        $nbPage = $this->countBrowsePages($type);
+        for ($i = 1; $i <= $nbPage; $i++) {
+            $url = $this->getBrowseUrl($type);
+            $items = $this->getItems($url);
+        }
+
+        return $items;
     }
 
     /**
      * Get browser url filtered by type
      *
      * @param string $type
+     * @param int    $page
      *
      * @return string
      */
-    protected function getBrowseUrl($type)
+    protected function getBrowseUrl($type, $page = 1)
     {
-        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=%d', $this->getAppId(), $type, $this->browsePerPage);
+        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=%d&p=%d', $this->getAppId(), $type, $this->browsePerPage, $page);
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return int
+     *
+     * @throws \Exception
+     */
+    protected function countBrowsePages($type)
+    {
+        $crawler = new Crawler($this->reader->get($this->getBrowseUrl($type)), $this->getBrowseUrl($type));
+        $pageLinkNode = $crawler->filter('#profileBlock > div > div.workshopBrowsePaging > div.workshopBrowsePagingControls > a.pagelink');
+        if (!$pageLinkNode->count()) {
+            return 1;
+        }
+
+        return (int) $pageLinkNode->last()->text();
     }
 }
