@@ -56,15 +56,14 @@ abstract class AbstractWorkshop
         $crawler = new Crawler($this->reader->get($this->getUrl()), $this->getUrl());
 
         return $crawler->filter('body > div.apphub_background > div.workshop_home_content > div.right_column > div.panel .filterOption')
+                        ->reduce(function(Crawler $node) {
+                            $labelNode = $node->filter('label');
+                            $inputNode = $node->filter('input');
+                            return $labelNode->count() && $inputNode->count();
+                        })
                        ->each(function(Crawler $node) {
-                           $labelNode = $node->filter('label');
                            $inputNode = $node->filter('input');
-
-                           $label = '';
-
-                           if ($labelNode->count()) {
-                               $label = mb_substr($node->text(), 0, mb_strpos($node->text(), '(') -2);
-                           }
+                           $label = mb_substr($node->text(), 0, mb_strpos($node->text(), '(') -2);
 
                            return [
                                'label' => trim($label),
@@ -85,8 +84,7 @@ abstract class AbstractWorkshop
 
         $nbPage = $this->countBrowsePages($type);
         for ($page = 1; $page <= $nbPage; $page++) {
-            $url = $this->getBrowseUrl($type, $page);
-            $items = $this->getItems($url);
+            $items = array_merge($items, $this->getBrowseItems($this->getBrowseUrl($type, $page)));
         }
 
         return $items;
@@ -121,5 +119,11 @@ abstract class AbstractWorkshop
         }
 
         return (int) $pageLinkNode->last()->text();
+    }
+
+    public function getBrowseItems($url)
+    {
+
+        return [];
     }
 }
