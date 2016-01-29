@@ -6,7 +6,8 @@ require 'vendor/autoload.php';
 
 $workshop = new ArkWorkshop();
 $types = $workshop->getTypes();
-if (count($types)) {
-    $items = $workshop->get($types[0]['slug']);
-    var_dump($items);
+
+foreach ($types as $type) {
+    $items = $workshop->get($type['slug']);
+    echo sprintf('%d items in type %s (%s)', count($items), $type['label'], $workshop->getBrowseUrl($type['slug'])) . "\n";
 }

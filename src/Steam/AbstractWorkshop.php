@@ -17,7 +17,7 @@ abstract class AbstractWorkshop
     /**
      * @var int
      */
-    protected $browsePerPage = 9;
+    protected $browsePerPage = 30;
 
     /**
      * Constructor.
@@ -98,7 +98,7 @@ abstract class AbstractWorkshop
      *
      * @return string
      */
-    protected function getBrowseUrl($type, $page = 1)
+    public function getBrowseUrl($type, $page = 1)
     {
         return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=%d&p=%d', $this->getAppId(), $type, $this->browsePerPage, $page);
     }
@@ -121,9 +121,31 @@ abstract class AbstractWorkshop
         return (int) $pageLinkNode->last()->text();
     }
 
+    /**
+     * @param string $url
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getBrowseItems($url)
     {
+        $crawler = new Crawler($this->reader->get($url), $url);
+        return $crawler->filter('#profileBlock .workshopItem')
+                ->each(function(Crawler $node) {
+                    if ($node->filter('.fileRating')->count()) {
+                        $rating = $node->filter('.fileRating')->attr('src');
+                        $rating = preg_replace('/.+\/(.+)-star.png.+/si', '$1', $rating);
+                    }
 
-        return [];
+                    return [
+                        'link' => $node->filter('a')->attr('href'),
+                        'picture' => $node->filter('img.workshopItemPreviewImage ')->attr('src'),
+                        'name' => $node->filter('.workshopItemTitle')->text(),
+                        'rating' => (int) $rating,
+                        'authorName' => $node->filter('.workshopItemAuthorName a')->text(),
+                        'authorLink' => $node->filter('.workshopItemAuthorName a')->attr('href'),
+                    ];
+                });
     }
 }
