@@ -78,7 +78,7 @@ abstract class AbstractWorkshop
      *
      * @return array
      */
-    public function get($type)
+    public function get($type = null)
     {
         $items = [];
 
@@ -98,9 +98,13 @@ abstract class AbstractWorkshop
      *
      * @return string
      */
-    public function getBrowseUrl($type, $page = 1)
+    public function getBrowseUrl($type = null, $page = 1)
     {
-        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=%d&p=%d', $this->getAppId(), $type, $this->browsePerPage, $page);
+        if (null !== $type) {
+            return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=%d&p=%d', $this->getAppId(), $type, $this->browsePerPage, $page);
+        }
+
+        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&numperpage=%d&p=%d', $this->getAppId(), $this->browsePerPage, $page);
     }
 
     /**
@@ -110,7 +114,7 @@ abstract class AbstractWorkshop
      *
      * @throws \Exception
      */
-    protected function countBrowsePages($type)
+    protected function countBrowsePages($type = null)
     {
         $crawler = new Crawler($this->reader->get($this->getBrowseUrl($type)), $this->getBrowseUrl($type));
         $pageLinkNode = $crawler->filter('#profileBlock > div > div.workshopBrowsePaging > div.workshopBrowsePagingControls > a.pagelink');
