@@ -1,6 +1,6 @@
 <?php
 
-use Ark\Workshop;
+use App\Ark\ArkWorkshop;
 
 require 'vendor/autoload.php';
 
