@@ -84,8 +84,8 @@ abstract class AbstractWorkshop
         $items = [];
 
         $nbPage = $this->countBrowsePages($type);
-        for ($i = 1; $i <= $nbPage; $i++) {
-            $url = $this->getBrowseUrl($type);
+        for ($page = 1; $page <= $nbPage; $page++) {
+            $url = $this->getBrowseUrl($type, $page);
             $items = $this->getItems($url);
         }
 
