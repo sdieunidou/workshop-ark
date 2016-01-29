@@ -85,7 +85,6 @@ abstract class AbstractWorkshop
         $nbPage = $this->countBrowsePages($type);
         for ($page = 1; $page <= $nbPage; $page++) {
             $items = array_merge($items, $this->getBrowseItems($this->getBrowseUrl($type, $page)));
-            var_dump($items);die;
         }
 
         return $items;
