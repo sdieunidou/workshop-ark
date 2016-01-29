@@ -65,14 +65,27 @@ abstract class AbstractWorkshop
                            return [
                                'label' => trim($label),
                                'id'    => (int) $node->filter('input')->attr('id'),
-                               'slug'  => (int) $node->filter('input')->attr('value'),
+                               'slug'  => $node->filter('input')->attr('value'),
                                'count' => (int) $count,
                            ];
                        });
     }
 
-    public function get($typeId)
+    public function get($type)
     {
+        $browseUrl = $this->getBrowseUrl($type);
+        var_dump($browseUrl);
+    }
 
+    /**
+     * Get browser url filtered by type
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getBrowseUrl($type)
+    {
+        return sprintf('http://steamcommunity.com/workshop/browse/?appid=%d&requiredtags[]=%s&numperpage=30', $this->getAppId(), $type);
     }
 }
